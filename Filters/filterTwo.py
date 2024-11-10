@@ -116,12 +116,4 @@ def process_data(ticker_code, file_name="tickers_data.csv"):
     else:
         print(f"No new data available for {ticker_code}.")
 
-# Main execution
 
-# Fetch all issuer codes
-issuer_codes = fetch_issuer_codes()
-print(f"Fetched issuer codes: {issuer_codes}")
-
-# Example usage for each issuer
-for ticker_code in issuer_codes:
-    process_data(ticker_code)  # Process each issuer to fetch and update data

@@ -43,6 +43,6 @@ def processTickerTagData(file_name="ticker_codes.csv"):
     else:
         print(f"No new data available for ticker codes.")
 
-processTickerTagData("ticker_codes.csv")
+
 
 
