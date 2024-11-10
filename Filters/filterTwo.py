@@ -51,10 +51,14 @@ def fetch_missing_data(ticker_code, start_date=None):
                     cells = row.find_all('td')
                     date = cells[0].text.strip()
                     price = cells[1].text.strip().replace(",", "")
+                    maxPrice = cells[2].text.strip().replace(",", "")
+                    minPrice = cells[3].text.strip().replace(",", "")
+                    volume = cells[6].text.strip().replace(",", "")
+
 
                     # Skip rows with invalid price
                     if price and price.replace('.', '', 1).isdigit():
-                        data.append({'date': date, 'price': float(price), 'ticker_code': ticker_code})
+                        data.append({'date': date, 'price': float(price), 'ticker_code': ticker_code, 'maxPrice': float(maxPrice or 0), 'minPrice': float(minPrice or 0), 'volume': float(volume or 0)})
                     else:
                         print(f"Skipping row with invalid price for {ticker_code} on date {date}")
 
