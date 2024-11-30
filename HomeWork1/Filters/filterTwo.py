@@ -9,7 +9,26 @@ import threading
 # Lock for database access
 data_lock = threading.Lock()
 
-# Function to fetch missing data for a single ticker
+#Convert Numbered string into 36,900.000
+def convertToStringFormat(convert):
+    if convert.text.strip():
+        temp = convert.text.replace(',', 'fak')
+        temp = temp.replace('.', ',')
+        temp = temp.replace('fak', '.')
+        convert = temp
+    else:
+        convert = "0,00"
+    return convert
+
+#Convert Float string from 36,900.00 into float num 36900.00
+def convertToFloatFormat(convert):
+    if convert.text.strip():
+        temp = convert.text.replace(',', '')
+        convert = float(temp)
+    else:
+        convert = 0.00
+    return convert
+
 # Update in fetch_missing_data
 def fetch_missing_data(ticker_code, start_date=None):
     url = f"https://www.mse.mk/mk/stats/symbolhistory/{ticker_code}"
@@ -40,10 +59,10 @@ def fetch_missing_data(ticker_code, start_date=None):
                             data.append({
                                 'ticker_code': ticker_code,
                                 'date': cells[0].text.strip(),
-                                'lastPrice': float(cells[1].text.strip().replace(",", "") or 0),
-                                'maxPrice': float(cells[2].text.strip().replace(",", "") or 0),
-                                'minPrice': float(cells[3].text.strip().replace(",", "") or 0),
-                                'volume': float(cells[6].text.strip().replace(",", "") or 0),
+                                'lastPrice': convertToStringFormat(cells[1]),
+                                'maxPrice': convertToStringFormat(cells[2]),
+                                'minPrice': convertToStringFormat(cells[3]),
+                                'volume': convertToStringFormat(cells[4]),
                             })
 
                     to_date = start_date  # Update to_date for the next iteration
@@ -54,7 +73,7 @@ def fetch_missing_data(ticker_code, start_date=None):
         return data
     else:
         if isinstance(start_date, str):
-            start_date = pd.to_datetime(start_date, format='%Y-%m-%d', errors='coerce', dayfirst=True)
+            start_date = pd.to_datetime(start_date, format='%d-%m-%Y', errors='coerce', dayfirst=True)
         # Fetch data starting from the given start_date to now
         while start_date < to_date:
             start_date_str = start_date.strftime('%d.%m.%Y')
@@ -77,10 +96,10 @@ def fetch_missing_data(ticker_code, start_date=None):
                             data.append({
                                 'ticker_code': ticker_code,
                                 'date': cells[0].text.strip(),
-                                'lastPrice': float(cells[1].text.strip().replace(",", "") or 0),
-                                'maxPrice': float(cells[2].text.strip().replace(",", "") or 0),
-                                'minPrice': float(cells[3].text.strip().replace(",", "") or 0),
-                                'volume': float(cells[6].text.strip().replace(",", "") or 0),
+                                'lastPrice': convertToStringFormat(cells[1]),
+                                'maxPrice': convertToStringFormat(cells[2]),
+                                'minPrice': convertToStringFormat(cells[3]),
+                                'volume': convertToStringFormat(cells[4]),
                             })
 
                     # Update start_date for the next iteration
