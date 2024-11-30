@@ -31,12 +31,12 @@ def save_tickers_to_db(tickers, db_name="mse_tickers.db"):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS issuers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            ticker_code TEXT NOT NULL
+            ticker_code TEXT NOT NULL UNIQUE
         )
     """)
 
     for ticker in tickers:
-        cursor.execute("INSERT INTO issuers (ticker_code) VALUES (?)", (ticker,))
+        cursor.execute("INSERT OR IGNORE INTO issuers (ticker_code) VALUES (?)", (ticker,))
 
     connection.commit()
     connection.close()

@@ -39,7 +39,8 @@ if __name__ == '__main__':
 
     # Format and verify the data using Filter Three
     print("Finalizing and verifying data...")
-    filterThree.fetch_all_data_from_db("mse_data.db")
+    filterThree.update_data()
+    # filterThree.fetch_all_data_from_db("mse_data.db")
 
     end_time = time.time()
     print(f"Execution completed in {end_time - start_time:.2f} seconds.")
