@@ -15,14 +15,14 @@ conn.commit()
 def fetch_all_data_from_db(db_name="mse_data.db"):
     connection = sqlite3.connect(db_name)
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM 'mse_data.db' ORDER BY date ASC")
+    cursor.execute("SELECT * FROM mse_data ORDER BY date ASC")  # Updated table name
     rows = cursor.fetchall()
     connection.close()
     return rows
 
 # Function to check the last available date for a ticker in the database
 def check_existing_data(ticker_code):
-    cursor.execute('SELECT MAX(date) FROM "mse_data.db" WHERE ticker_code = ?', (ticker_code,))
+    cursor.execute('SELECT MAX(date) FROM mse_data WHERE ticker_code = ?', (ticker_code,))  # Updated table name
     result = cursor.fetchone()
     return result[0] if result and result[0] else None
 
@@ -75,7 +75,7 @@ def update_data():
         missing_data = fetch_missing_data(ticker_code, last_date)
         if missing_data:
             cursor.executemany("""
-                INSERT INTO "mse_data.db" (ticker_code, date, lastPrice, maxPrice, minPrice, volume)
+                INSERT INTO mse_data (ticker_code, date, lastPrice, maxPrice, minPrice, volume)
                 VALUES (?, ?, ?, ?, ?, ?)
             """, missing_data)
             conn.commit()

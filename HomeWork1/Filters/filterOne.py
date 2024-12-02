@@ -22,7 +22,7 @@ def getTickers():
     return ticker_codes
 
 
-def save_tickers_to_db(tickers, db_name="mse_tickers.db"):
+def save_tickers_to_db(tickers, db_name="mse_data.db"):
     # Connect to the database
     issuers = db_name
     connection = sqlite3.connect(db_name)

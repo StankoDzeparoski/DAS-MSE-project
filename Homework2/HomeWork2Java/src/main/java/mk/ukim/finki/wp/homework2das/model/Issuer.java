@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@Table(name = "mse_data.db", uniqueConstraints = {
+@Table(name = "mse_data", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"ticker_code", "date"})
 })
 

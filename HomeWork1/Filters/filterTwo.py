@@ -116,8 +116,6 @@ def fetch_missing_data(ticker_code, start_date=None):
 
         return data
 
-
-
 # Function to save data to the database
 def save_data_to_db(data, db_name="mse_data.db"):
     with data_lock:
@@ -126,7 +124,7 @@ def save_data_to_db(data, db_name="mse_data.db"):
 
         # Create table if it doesn't exist
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS "mse_data.db" (
+            CREATE TABLE IF NOT EXISTS mse_data (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 ticker_code TEXT NOT NULL,
                 date TEXT NOT NULL,
@@ -141,7 +139,7 @@ def save_data_to_db(data, db_name="mse_data.db"):
         # Insert data
         for row in data:
             cursor.execute("""
-                INSERT INTO "mse_data.db" (ticker_code, date, lastPrice, maxPrice, minPrice, volume)
+                INSERT INTO mse_data (ticker_code, date, lastPrice, maxPrice, minPrice, volume)
                 VALUES (?, ?, ?, ?, ?, ?)
             """, (row['ticker_code'], row['date'], row['lastPrice'], row['maxPrice'], row['minPrice'], row['volume']))
 
@@ -154,7 +152,7 @@ def get_latest_date(ticker_code, db_name="mse_data.db"):
         cursor = connection.cursor()
 
         cursor.execute("""
-            SELECT MAX(date) FROM "mse_data.db" WHERE ticker_code = ?
+            SELECT MAX(date) FROM mse_data WHERE ticker_code = ?
         """, (ticker_code,))
         result = cursor.fetchone()
         connection.close()
@@ -169,7 +167,6 @@ def process_ticker(ticker_code):
     if data:
         save_data_to_db(data)
     print(f"Completed {ticker_code}.")
-
 
 # Function to process tickers using ThreadPoolExecutor
 def process_data_with_threads(ticker_codes):

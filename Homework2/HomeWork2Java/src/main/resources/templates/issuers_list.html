@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Issuers</title>
+</head>
+<body>
+<h1>List of Issuers for date</h1>
+<span th:text="${#dates.format(#dates.createNow(), 'dd-MM-yyyy')}"></span>
+<ul>
+    <li th:each="ticker : ${tickers}">
+        <span th:text="${ticker.tickerCode}">Ticker Code</span>
+    </li>
+</ul>
+</body>
+</html>

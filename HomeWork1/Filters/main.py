@@ -13,7 +13,7 @@ if __name__ == '__main__':
 
     # Create table if it doesn't exist
     cursor.execute("""
-            CREATE TABLE IF NOT EXISTS "mse_data.db" (
+            CREATE TABLE IF NOT EXISTS mse_data (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 ticker_code TEXT NOT NULL,
                 date TEXT NOT NULL,
@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # Fetch issuer codes using Filter One and save them to the database
     print("Fetching issuer codes...")
     tickers = filterOne.getTickers()
-    filterOne.save_tickers_to_db(tickers, "mse_tickers.db")
+    filterOne.save_tickers_to_db(tickers, "mse_data.db")
     print(f"Saved {len(tickers)} issuer codes to the database.")
 
     # Process each issuer using Filter Two
