@@ -19,11 +19,11 @@ public class Issuer {
     private String tickerCode;
     @Column(name = "date", nullable = false)
     private LocalDate date;
-    @Column(name = "lastPrice")
+    @Column(name = "last_price")
     private Float lastPrice;
-    @Column(name = "maxPrice")
+    @Column(name = "max_price")
     private Float maxPrice;
-    @Column(name = "minPrice")
+    @Column(name = "min_price")
     private Float minPrice;
     @Column(name = "volume")
     private Float volume;

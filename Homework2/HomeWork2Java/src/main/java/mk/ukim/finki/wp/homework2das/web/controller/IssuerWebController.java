@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -34,18 +35,29 @@ public class IssuerWebController {
 
     // Mapping to show all issuers in a Thymeleaf template
     @GetMapping("/issuers")
-    public String showAllIssuersPage(Model model) {
+    public String showAllIssuersPage(@RequestParam(required = false) String error,Model model) {
+        if(error != null && !error.isEmpty()) {
+            model.addAttribute("hasError", true);
+            model.addAttribute("error", error);
+        }
         List<Ticker> tickers = tickerService.findAll();
         model.addAttribute("tickers", tickers);
-        return "issuers_list"; // Name of the Thymeleaf template (issuers.html)
+        return "issuers_list";
     }
 
-    // Mapping to show a single issuer by tickerCode and date
-    @GetMapping("/issuers/{tickerCode}/{date}")
-    public String showIssuerDetailsPage(@PathVariable String tickerCode, @PathVariable String date, Model model) {
-        List<Issuer> issuers = issuerService.getIssuersByTickerCode(tickerCode);
-        model.addAttribute("issuers", issuers);
-        return "issuer-details"; // Another Thymeleaf template for details
+    // Mapping to show a single issuer by tickerCode
+    @GetMapping("/issuers/{tickerCode}")
+    public String showIssuerDetailsPage(@PathVariable String tickerCode, Model model) {
+        if(!this.issuerService.getIssuersByTickerCode(tickerCode).isEmpty()){
+            List<Issuer> TickerData = issuerService.getIssuersByTickerCode(tickerCode);
+            TickerData.sort(Comparator.comparing(Issuer::getDate).reversed());
+            model.addAttribute("TickerData", TickerData);
+            System.out.println(TickerData.get(0));
+            return "issuer_by_ticker";
+        }
+
+        return "redirect:/issuers?error=tickerCodeNotFound";
+
     }
 
 }

@@ -9,6 +9,7 @@ import threading
 # Lock for database access
 data_lock = threading.Lock()
 
+# EN FORMAT FLOAT "24,550.00"
 #Convert Numbered string into 36,900.000
 def convertToStringFormat(convert):
     if convert.text.strip():
@@ -31,7 +32,7 @@ def convertToFloatFormat(convert):
 
 # Update in fetch_missing_data
 def fetch_missing_data(ticker_code, start_date=None):
-    url = f"https://www.mse.mk/mk/stats/symbolhistory/{ticker_code}"
+    url = f"https://www.mse.mk/en/stats/symbolhistory/{ticker_code}"
     data = []
     to_date = datetime.now()
 
@@ -39,8 +40,8 @@ def fetch_missing_data(ticker_code, start_date=None):
         # Fetch data for the last 10 years if no data exists
         for _ in range(10):
             start_date = to_date - timedelta(days=366 if to_date.year % 4 == 0 else 365)
-            start_date_str = start_date.strftime('%d.%m.%Y')
-            to_date_str = to_date.strftime('%d.%m.%Y')
+            start_date_str = start_date.strftime('%m/%d/%Y')  # Change to MM/DD/YYYY format
+            to_date_str = to_date.strftime('%m/%d/%Y')  # Change to MM/DD/YYYY format
 
             params = {'fromDate': start_date_str, 'toDate': to_date_str}
 
@@ -59,10 +60,10 @@ def fetch_missing_data(ticker_code, start_date=None):
                             data.append({
                                 'ticker_code': ticker_code,
                                 'date': cells[0].text.strip(),
-                                'lastPrice': convertToStringFormat(cells[1]),
-                                'maxPrice': convertToStringFormat(cells[2]),
-                                'minPrice': convertToStringFormat(cells[3]),
-                                'volume': convertToStringFormat(cells[4]),
+                                'last_price': convertToFloatFormat(cells[1]),
+                                'max_price': convertToFloatFormat(cells[2]),
+                                'min_price': convertToFloatFormat(cells[3]),
+                                'volume': convertToFloatFormat(cells[6]),
                             })
 
                     to_date = start_date  # Update to_date for the next iteration
@@ -73,11 +74,11 @@ def fetch_missing_data(ticker_code, start_date=None):
         return data
     else:
         if isinstance(start_date, str):
-            start_date = pd.to_datetime(start_date, format='%d-%m-%Y', errors='coerce', dayfirst=True)
+            start_date = pd.to_datetime(start_date, format='%m/%d/%Y', errors='coerce')
         # Fetch data starting from the given start_date to now
         while start_date < to_date:
-            start_date_str = start_date.strftime('%d.%m.%Y')
-            to_date_str = to_date.strftime('%d.%m.%Y')
+            start_date_str = start_date.strftime('%m/%d/%Y')  # Change to MM/DD/YYYY format
+            to_date_str = to_date.strftime('%m/%d/%Y')  # Change to MM/DD/YYYY format
 
             params = {'fromDate': start_date_str, 'toDate': to_date_str}
 
@@ -96,15 +97,15 @@ def fetch_missing_data(ticker_code, start_date=None):
                             data.append({
                                 'ticker_code': ticker_code,
                                 'date': cells[0].text.strip(),
-                                'lastPrice': convertToStringFormat(cells[1]),
-                                'maxPrice': convertToStringFormat(cells[2]),
-                                'minPrice': convertToStringFormat(cells[3]),
-                                'volume': convertToStringFormat(cells[4]),
+                                'last_price': convertToFloatFormat(cells[1]),
+                                'max_price': convertToFloatFormat(cells[2]),
+                                'min_price': convertToFloatFormat(cells[3]),
+                                'volume': convertToFloatFormat(cells[6]),
                             })
 
                     # Update start_date for the next iteration
                     if data:
-                        start_date = datetime.strptime(data[-1]['date'], '%d.%m.%Y') + timedelta(days=1)
+                        start_date = datetime.strptime(data[-1]['date'], '%m/%d/%Y') + timedelta(days=1)
                     else:
                         break
                 else:
@@ -128,9 +129,9 @@ def save_data_to_db(data, db_name="mse_data.db"):
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 ticker_code TEXT NOT NULL,
                 date TEXT NOT NULL,
-                lastPrice REAL,
-                maxPrice REAL,
-                minPrice REAL,
+                last_price REAL,
+                max_price REAL,
+                min_price REAL,
                 volume REAL,
                 UNIQUE (ticker_code, date) ON CONFLICT REPLACE
             )
@@ -139,9 +140,9 @@ def save_data_to_db(data, db_name="mse_data.db"):
         # Insert data
         for row in data:
             cursor.execute("""
-                INSERT INTO mse_data (ticker_code, date, lastPrice, maxPrice, minPrice, volume)
+                INSERT INTO mse_data (ticker_code, date, last_price, max_price, min_price, volume)
                 VALUES (?, ?, ?, ?, ?, ?)
-            """, (row['ticker_code'], row['date'], row['lastPrice'], row['maxPrice'], row['minPrice'], row['volume']))
+            """, (row['ticker_code'], row['date'], row['last_price'], row['max_price'], row['min_price'], row['volume']))
 
         connection.commit()
         connection.close()

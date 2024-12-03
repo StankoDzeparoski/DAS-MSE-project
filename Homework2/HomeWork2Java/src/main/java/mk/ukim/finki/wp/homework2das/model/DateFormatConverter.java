@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 @Converter(autoApply = true) // autoApply ensures it's applied to all LocalDate fields
 public class DateFormatConverter implements AttributeConverter<LocalDate, String> {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("M/d/yyyy");
 
     @Override
     public String convertToDatabaseColumn(LocalDate attribute) {

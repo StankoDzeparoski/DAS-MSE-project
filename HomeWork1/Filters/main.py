@@ -17,9 +17,9 @@ if __name__ == '__main__':
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 ticker_code TEXT NOT NULL,
                 date TEXT NOT NULL,
-                lastPrice REAL,
-                maxPrice REAL,
-                minPrice REAL,
+                last_price REAL,
+                max_price REAL,
+                min_price REAL,
                 volume REAL,
                 UNIQUE (ticker_code, date) ON CONFLICT REPLACE
             )
