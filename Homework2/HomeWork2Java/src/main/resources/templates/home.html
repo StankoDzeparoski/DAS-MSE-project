@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Boxicons CSS -->
@@ -108,11 +109,13 @@
             top: 15%;
             left: 0;
             height: 100%;
-            padding: 80px 20px;
+            /*padding: 80px 20px;*/
             z-index: 100;
             overflow-y: scroll;
             box-shadow: 0 0 1px var(--grey-color-light);
             transition: all 0.5s ease;
+            bottom: 0; /* Make sure it extends to the bottom */
+            padding: 20px;
         }
         .sidebar::-webkit-scrollbar {
             display: none;
@@ -201,6 +204,186 @@
                 display: none;
             }
         }
+
+        #content {
+            height:100%;
+            top:15%;
+            position:absolute;
+            margin-left: 260px; /* Ensure content is to the right of the sidebar */
+            padding: 20px;
+            margin-top: 6%; /* Start below the navbar */
+            width: calc(100% - 260px); /* Take the remaining width minus the sidebar */
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            overflow: auto; /* Ensure scrolling if content overflows */
+
+        }
+
+        /*button*/
+        /* Button Container */
+
+
+        /* Button Container - Move closer to the top */
+        .button-container {
+            display: flex;
+            justify-content: flex-start;  /* Align buttons to the left */
+            align-items: center; /* Align buttons vertically */
+            gap: 20px; /* Spacing between buttons */
+            margin-left: 10px;  /* Move the buttons to the left closer to the black line */
+            margin-top: -500px; /* Keep the vertical spacing */
+        }
+
+        .chart-container {
+            margin-top: -400px; /* Adjust this value to move the chart up */
+        }
+
+
+
+        /* Report Buttons */
+        .report-button {
+            background-color: black;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .report-button:hover {
+            background-color: #ff6300;
+            transform: scale(1.05);
+        }
+
+        .report-button:focus {
+            outline: none;
+            box-shadow: 0 0 5px #ff6300;
+        }
+
+        /* Generate Button Styling (same size as report buttons for uniformity) */
+        .generate-button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .generate-button:hover {
+            background-color: #ff6300;
+            transform: scale(1.05);
+        }
+
+        .generate-button:focus {
+            outline: none;
+            box-shadow: 0 0 5px #ff6300;
+        }
+
+        /* Remove margin between the buttons and the chart */
+        .button-container {
+            margin-bottom: 0; /* Remove the bottom margin */
+        }
+
+        /* Remove margin-top in the chart container to eliminate space */
+
+
+
+        /* Content Wrapper - Flex container to align buttons, chart, and info boxes side by side */
+        .content-wrapper {
+            display: flex;
+            justify-content: space-between;  /* Space between chart and info boxes */
+            gap: 20px;
+        }
+
+        /* Chart Container Styling */
+        .chart-container {
+            width: 70%;  /* Adjust the chart's width */
+            max-width: 800px;
+            height: 400px;
+            margin-top: -450px;  /* Space between the buttons and the chart */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+
+
+        /* Info Box Container Styling */
+        /* Info Box Container Styling */
+        .info-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 28%;  /* Width of the container for info boxes */
+            margin-top: 20px;
+        }
+
+        /* Info Box Styling */
+        .info-box {
+            height: 130px;  /* Adjust height */
+            padding: 20px;
+            color: white;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        /* Specific styling for each text line */
+        .info-box-title {
+            font-size: 20px;  /* Adjust the title size */
+            font-weight: bold;
+        }
+
+        .info-box-code {
+            font-size: 18px;  /* Adjust the code size */
+            font-weight: normal;
+        }
+
+        .info-box-change {
+            font-size: 16px;  /* Adjust the change value size */
+            font-weight: normal;
+            color: #FFDD00;  /* Example color for change (yellow for +5.63) */
+        }
+
+        .info-box-value {
+            font-size: 16px;  /* Adjust the current value size */
+            font-weight: normal;
+        }
+
+        /* Customize the colors to match the photo */
+        .info-box:nth-child(1) {
+            background-color: #A6F7E2;  /* Dark green */
+        }
+
+        .info-box:nth-child(2) {
+            background-color: #B79BFF;  /* Yellow */
+        }
+
+        .info-box:nth-child(3) {
+            background-color: #FFE5A5;  /* Tomato red */
+        }
+
+        .info-box:nth-child(4) {
+            background-color: #C7FFA5;  /* Steel blue */
+        }
     </style>
 </head>
 <body>
@@ -282,7 +465,68 @@
 
     </div>
 </nav>
-<!-- JavaScript -->
+<!-- Main Content -->
+<div id="content">
+    <div class="content-wrapper">
+        <!-- Button Container - Move this above the chart -->
+        <div class="button-container">
+            <button class="report-button">This Day</button>
+            <button class="report-button">This Week</button>
+            <button class="report-button">This Month</button>
+            <button class="generate-button">Generate Graph</button>
+        </div>
+
+        <!-- Info Boxes Container - Positioned to the right of the chart -->
+        <!-- Info Box Container -->
+        <div class="info-container">
+            <!-- Green Info Box (AM Broker AD Skopje) -->
+            <div class="info-box">
+                <div class="info-box-content">
+                    <div class="info-box-title">AM Broker AD Skopje</div>
+                    <div class="info-box-code">AMBR</div>
+                    <div class="info-box-change">+5.63</div>
+                    <div class="info-box-value">Current Value: 2,100.00 MKD</div>
+                </div>
+            </div>
+            <!-- Yellow Info Box -->
+            <div class="info-box">
+                <div class="info-box-content">
+                    <div class="info-box-title">ZUAS AD Skopje</div>
+                    <div class="info-box-code">ZUAS</div>
+                    <div class="info-box-change">-4.44</div>
+                    <div class="info-box-value">Current Value: 24,199.00 MKD</div>
+                </div>
+            </div>
+            <!-- Red Info Box -->
+            <div class="info-box">
+                <div class="info-box-content">
+                    <div class="info-box-title">Stopanska Banka AD Skopje</div>
+                    <div class="info-box-code">STB</div>
+                    <div class="info-box-change">+17.63</div>
+                    <div class="info-box-value">Current Value: 2,100.00 MKD</div>
+                </div>
+            </div>
+            <!-- Blue Info Box -->
+            <div class="info-box">
+                <div class="info-box-content">
+                    <div class="info-box-title">Komercijalna Banka AD Skopje</div>
+                    <div class="info-box-code">KMB</div>
+                    <div class="info-box-change">+17.63</div>
+                    <div class="info-box-value">Current Value: 25,370.00 MKD</div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Chart Container - Positioned below the buttons -->
+    <div class="chart-container">
+        <canvas id="dailyReportChart"></canvas>
+    </div>
+</div>
+
+<!-- JavaScript Both Nav bar scripts-->
 <script>
     const body = document.querySelector("body");
     const darkLight = document.querySelector("#darkLight");
@@ -311,6 +555,63 @@
         });
     });
 
+</script>
+
+<!-- Graph scripts -->
+<script>
+    // Get the canvas element
+    const ctx = document.getElementById('dailyReportChart').getContext('2d');
+
+    // Create the chart
+    const dailyReportChart = new Chart(ctx, {
+        type: 'line', // Chart type (e.g., line, bar, etc.)
+        data: {
+            labels: ['KMB', 'ZUAS', 'STB', 'AMBR', 'TEL', 'VITA', 'MPT', 'TNB', 'ATPP'], // X-axis labels
+            datasets: [{
+                label: 'Stock Value (MKD)',
+                data: [25370, 24199, 2100, 2100, 36900, 405, 10101, 87000, 49300], // Y-axis data
+                backgroundColor: 'rgba(255, 165, 0, 0.2)', // Area color
+                borderColor: '#ff6300', // Line color
+                borderWidth: 2,
+                fill: true, // Fill the area under the line
+                pointBackgroundColor: '#333', // Color of the points
+                pointRadius: 5, // Size of the points
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Stock Symbols',
+                        color: '#333',
+                        font: {
+                            size: 14,
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: 'Stock Values (MKD)',
+                        color: '#333',
+                        font: {
+                            size: 14,
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    });
 </script>
 </body>
 </html>
