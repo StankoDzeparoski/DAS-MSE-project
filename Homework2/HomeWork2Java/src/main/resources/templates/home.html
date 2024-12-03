@@ -24,6 +24,10 @@
         body {
             background-color: #e7f2fd;
             transition: all 0.5s ease;
+            display: flex;
+            flex-direction: row; /* To place the sidebar and content side by side */
+            margin: 0;
+            padding: 0;
         }
         body.dark {
             background-color: #333;
@@ -203,7 +207,7 @@
 <!-- navbar -->
 <nav class="navbar">
     <div class="logo_item">
-        <img src="http://localhost:8080/assets/stoxmk_logo.png" alt="Stoxmk logo"></i>
+        <img id="logo" src="http://localhost:8080/assets/stoxmk_logo.jpeg" alt="Stoxmk logo">
     </div>
 
     <div class="search_bar">
@@ -216,6 +220,12 @@
     </div>
 </nav>
 
+
+<!--Example href-->
+<!--                    <a class="btn btn-sm btn-info" th:href="@{/songs/edit-form/{id} (id=${song.getId()})}">-->
+<!--                        <i class="fa fa-trash">Edit</i>-->
+<!--                    </a>-->
+
 <!-- sidebar -->
 <nav class="sidebar">
     <div class="menu_content">
@@ -223,31 +233,30 @@
             <!-- duplicate or remove this li tag if you want to add or remove navlink with submenu -->
             <!-- start -->
             <li class="item">
-                <div href="#" class="nav_link submenu_item">
-              <span class="navlink_icon">
-                <i class="bx bx-home-alt"></i>
-              </span>
-                    <a class="navlink">Home</a>
-                </div>
-                <div href="#" class="nav_link submenu_item">
-              <span class="navlink_icon">
-                <i class="bx bx-home-alt"></i>
-              </span>
-                    <a class="navlink">ISSUERS LIST</a>
-                </div>
-                <div href="#" class="nav_link submenu_item">
-              <span class="navlink_icon">
-                <i class="bx bx-home-alt"></i>
-              </span>
-                    <a class="navlink">REPORT</a>
-                </div>
-                <div href="#" class="nav_link submenu_item">
-              <span class="navlink_icon">
-                <i class="bx bx-home-alt"></i>
-              </span>
-                    <a class="navlink">HISTORY</a>
-                </div>
-
+                <a th:href="@{/}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">Home</span>
+                </a>
+                <a th:href="@{/issuers}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">ISSUERS LIST</span>
+                </a>
+                <a th:href="@{/}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">REPORT</span>
+                </a>
+                <a th:href="@{/}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">HISTORY</span>
+                </a>
             </li>
             <!-- end -->
 <!--            &lt;!&ndash; duplicate or remove this li tag if you want to add or remove navlink with submenu &ndash;&gt;-->
@@ -283,9 +292,10 @@
     darkLight.addEventListener("click", () => {
         body.classList.toggle("dark");
         if (body.classList.contains("dark")) {
-            document.setI
+            logo.src = "http://localhost:8080/assets/stoxmk_logodark.png";
             darkLight.classList.replace("bx-sun", "bx-moon");
         } else {
+            logo.src = "http://localhost:8080/assets/stoxmk_logo.jpeg";
             darkLight.classList.replace("bx-moon", "bx-sun");
         }
     });

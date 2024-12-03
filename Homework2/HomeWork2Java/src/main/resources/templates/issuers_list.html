@@ -262,31 +262,30 @@
             <!-- duplicate or remove this li tag if you want to add or remove navlink with submenu -->
             <!-- start -->
             <li class="item">
-                <div href="#" class="nav_link submenu_item">
-              <span class="navlink_icon">
-                <i class="bx bx-home-alt"></i>
-              </span>
-                    <a class="navlink">Home</a>
-                </div>
-                <div href="#" class="nav_link submenu_item">
-              <span class="navlink_icon">
-                <i class="bx bx-home-alt"></i>
-              </span>
-                    <a class="navlink">ISSUERS LIST</a>
-                </div>
-                <div href="#" class="nav_link submenu_item">
-              <span class="navlink_icon">
-                <i class="bx bx-home-alt"></i>
-              </span>
-                    <a class="navlink">REPORT</a>
-                </div>
-                <div href="#" class="nav_link submenu_item">
-              <span class="navlink_icon">
-                <i class="bx bx-home-alt"></i>
-              </span>
-                    <a class="navlink">HISTORY</a>
-                </div>
-
+                <a th:href="@{/}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">Home</span>
+                </a>
+                <a th:href="@{/issuers}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">ISSUERS LIST</span>
+                </a>
+                <a th:href="@{/}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">REPORT</span>
+                </a>
+                <a th:href="@{/}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">HISTORY</span>
+                </a>
             </li>
         </ul>
     </div>
@@ -303,7 +302,7 @@
         <tbody>
         <tr th:each="ticker : ${tickers}">
             <td>
-                <a th:href="@{/issuers/{tickerCode}/{date}(tickerCode=${ticker.tickerCode}, date='today')}"
+                <a th:href="@{/issuers/{tickerCode}(tickerCode=${ticker.tickerCode}, date='today')}"
                    th:text="${ticker.tickerCode}">
                     Ticker Code
                 </a>
