@@ -238,6 +238,75 @@
         td a:hover {
             text-decoration: underline;
         }
+
+    /*    Form styling   */
+        #issuerForm{
+            display: flex;
+            justify-content: space-evenly;
+        }
+
+        .form-container {
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        .form-group label {
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select {
+            font-size: 16px;
+            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            width: 100%;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+        .btn-primary {
+            cursor: pointer;
+            border: 1px solid #ced4da;
+            background-color: white;
+        }
+        .btn-primary:hover {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-back {
+            text-decoration: none;
+            border: 1px solid #ced4da;
+            /* width: 100%; */
+            background-color: white;
+            align-items: center;
+            display: flex
+        ;
+        }
+        .btn-back:hover {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+    /*    Form style end    */
+
+
+
+
     </style>
 </head>
 <body>
@@ -311,6 +380,7 @@
 </script>
 
 <div id="content">
+    <div class="form-container">
     <form id="issuerForm" onsubmit="updateFormAction(event)" method="POST">
         <div class="form-group">
             <label for="dateFrom">Date From</label>
@@ -320,7 +390,7 @@
                    name="dateFrom"
                    th:value="${''}"
                    required
-                   placeholder="dateStart M/D/YYYY">
+                   placeholder="MM/DD/YYYY or M/D/Y">
         </div>
         <div class="form-group">
             <label for="dateTo">Date To</label>
@@ -330,7 +400,7 @@
                    name="dateTo"
                    th:value="${''}"
                    required
-                   placeholder="dateEnd M/D/YYYY">
+                   placeholder="MM/DD/YYYY or M/D/Y">
         </div>
         <div class="form-group">
             <label for="dropdown">Ticker</label>
@@ -342,9 +412,10 @@
                 </option>
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <a type="button" class="btn btn-primary" href="/issuers">Back</a>
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a type="button" class="btn btn-back" href="/issuers">Back</a>
     </form>
+    </div>
 
 
 
