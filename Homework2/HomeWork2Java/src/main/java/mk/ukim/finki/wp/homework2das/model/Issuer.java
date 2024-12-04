@@ -29,10 +29,21 @@ public class Issuer {
     @Column(name = "min_price")
     private Float minPrice;
     @Column(name = "volume")
-
     private Float volume;
 
     public Issuer() {}
+
+    public Float getVolumeInMoney(){
+        return (this.volume * this.getAveragePrice());
+    }
+
+    public Double getChangeInPercent(){
+        return (double) Math.round((((lastPrice - minPrice)/minPrice)*(float)100) * 100d) / 100d;
+    }
+
+    public Float getAveragePrice(){
+        return (maxPrice + minPrice)/2;
+    }
 
     public static String formatNumber(double number) {
         // Create a DecimalFormatSymbols object to change the grouping separator
@@ -65,6 +76,12 @@ public class Issuer {
     }
     public String getStringVolume() {
         return formatNumber(volume);
+    }
+    public String getStringVolumeInMoney() {
+        return formatNumber(this.getVolumeInMoney());
+    }
+    public String getStringAveragePrice() {
+        return formatNumber(this.getAveragePrice());
     }
 
 }
