@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -31,8 +33,21 @@ public class IssuerWebController {
     // Mapping to home page
     @GetMapping("/")
     public String showHomePage(Model model) {
-//        List<Ticker> tickers = tickerService.findAll();
-//        model.addAttribute("tickers", tickers);
+        List<Ticker> tickers = tickerService.findAll();
+        model.addAttribute("tickers", tickers);
+        List<Issuer> TickerData = issuerService.getAllIssuers();
+        Issuer latestIssuer = TickerData.stream()
+                .max(Comparator.comparing(Issuer::getDate))
+                .orElse(null);
+//        System.out.println(latestIssuer);
+        TickerData = TickerData.stream()
+                .filter(i -> i.getDate().isEqual(latestIssuer.getDate()))
+                .collect(Collectors.toList());
+        TickerData.sort(Comparator.comparing(Issuer::getVolumeInMoney).reversed());
+        Set<String> distinct = new HashSet<>();
+        TickerData = TickerData.stream().filter(i -> distinct.add(i.getTickerCode())).limit(10).collect(Collectors.toList());
+//        System.out.println(TickerData);
+        model.addAttribute("TickerData", TickerData);
         return "home"; // Name of the Thymeleaf template (issuers.html)
     }
 
