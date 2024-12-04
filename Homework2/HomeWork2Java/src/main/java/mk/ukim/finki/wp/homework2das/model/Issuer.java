@@ -26,7 +26,7 @@ public class Issuer {
     @Column(name = "min_price")
     private Float minPrice;
     @Column(name = "volume")
-    
+
     private Float volume;
 
     public Issuer() {}

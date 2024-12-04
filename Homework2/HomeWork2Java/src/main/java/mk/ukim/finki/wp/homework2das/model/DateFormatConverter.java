@@ -15,7 +15,7 @@ public class DateFormatConverter implements AttributeConverter<LocalDate, String
         if (attribute == null) {
             return null;
         }
-        return attribute.format(FORMATTER); // Format the LocalDate to DD.MM.YYYY
+        return attribute.format(FORMATTER); // Format the LocalDate to M/d/yyyy
     }
 
     @Override
@@ -30,4 +30,3 @@ public class DateFormatConverter implements AttributeConverter<LocalDate, String
         }
     }
 }
-

@@ -282,7 +282,7 @@
                     </span>
                     <span class="navlink">REPORT</span>
                 </a>
-                <a th:href="@{/}" class="nav_link submenu_item">
+                <a th:href="@{/issuers/{tickerCode}(tickerCode='NONE')}" class="nav_link submenu_item">
                     <span class="navlink_icon">
                         <i class="bx bx-home-alt"></i>
                     </span>
@@ -294,7 +294,62 @@
 </nav>
 <!-- Main Content -->
 <h1>Issuer Details</h1>
+<script>
+    function updateFormAction(event) {
+        const form = document.getElementById('issuerForm');
+        const dropdown = document.getElementById('dropdown').value;
+
+        if (dropdown) {
+            // Update form action dynamically with the selected dropdown value
+            form.action = `/issuers/${dropdown}`;
+        } else {
+            // Prevent submission and alert the user if no ticker is selected
+            event.preventDefault();
+            alert("Please select an issuer from the dropdown.");
+        }
+    }
+</script>
+
 <div id="content">
+    <form id="issuerForm" onsubmit="updateFormAction(event)" method="POST">
+        <div class="form-group">
+            <label for="dateFrom">Date From</label>
+            <input type="text"
+                   class="form-control"
+                   id="dateFrom"
+                   name="dateFrom"
+                   th:value="${''}"
+                   required
+                   placeholder="dateStart M/D/YYYY">
+        </div>
+        <div class="form-group">
+            <label for="dateTo">Date To</label>
+            <input type="text"
+                   class="form-control"
+                   id="dateTo"
+                   name="dateTo"
+                   th:value="${''}"
+                   required
+                   placeholder="dateEnd M/D/YYYY">
+        </div>
+        <div class="form-group">
+            <label for="dropdown">Ticker</label>
+            <select id="dropdown" name="dropdown" required>
+                <option value="" disabled selected>Select an issuer</option>
+                <option th:each="ticker : ${tickers}"
+                        th:value="${ticker.getTickerCode()}"
+                        th:text="${ticker.getTickerCode()}">
+                </option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a type="button" class="btn btn-primary" href="/issuers">Back</a>
+    </form>
+
+
+
+
+
     <table>
         <thead>
         <tr>
