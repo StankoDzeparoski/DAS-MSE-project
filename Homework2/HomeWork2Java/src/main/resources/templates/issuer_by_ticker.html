@@ -366,10 +366,10 @@
         <tr th:each="issuer : ${TickerData}">
             <td th:text="${issuer.tickerCode}"></td>
             <td th:text="${issuer.date}"></td>
-            <td th:text="${issuer.lastPrice}"></td>
-            <td th:text="${issuer.maxPrice}"></td>
-            <td th:text="${issuer.minPrice}"></td>
-            <td th:text="${issuer.volume}"></td>
+            <td th:text="${issuer.getStringLastPrice()}"></td>
+            <td th:text="${issuer.getStringMaxPrice()}"></td>
+            <td th:text="${issuer.getStringMinPrice()}"></td>
+            <td th:text="${issuer.getStringVolume()}"></td>
         </tr>
         </tbody>
     </table>
