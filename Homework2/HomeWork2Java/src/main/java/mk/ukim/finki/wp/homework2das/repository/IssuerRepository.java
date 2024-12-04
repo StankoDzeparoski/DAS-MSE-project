@@ -20,6 +20,7 @@ public interface IssuerRepository extends JpaRepository<Issuer, Long> {
 
     List<Issuer> findByTickerCode(String tickerCode);
 
+
 //    @Query("SELECT i FROM Issuer i WHERE i.tickerCode = :tickerCode AND i.date = :date")
 //    Optional<Issuer> findIssuerByTickerCodeAndDate(@Param("tickerCode") String tickerCode, @Param("date") LocalDate date);
 

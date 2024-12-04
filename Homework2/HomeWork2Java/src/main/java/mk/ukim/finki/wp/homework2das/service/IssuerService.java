@@ -13,5 +13,6 @@ public interface IssuerService {
     Optional<Issuer> getIssuerByTickerCodeAndDate(String tickerCode, LocalDate date);
     // Method to get issuers by ticker code
     List<Issuer> getIssuersByTickerCode(String tickerCode);
+
 }
 
