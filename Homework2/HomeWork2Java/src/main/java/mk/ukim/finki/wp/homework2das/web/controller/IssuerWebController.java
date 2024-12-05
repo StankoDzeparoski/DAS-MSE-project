@@ -53,8 +53,8 @@ public class IssuerWebController {
 
     // Mapping to show all issuers in a Thymeleaf template
     @GetMapping("/issuers")
-    public String showAllIssuersPage(@RequestParam(required = false) String error,Model model) {
-        if(error != null && !error.isEmpty()) {
+    public String showAllIssuersPage(@RequestParam(required = false) String error, Model model) {
+        if (error != null && !error.isEmpty()) {
             model.addAttribute("hasError", true);
             model.addAttribute("error", error);
         }
@@ -70,11 +70,11 @@ public class IssuerWebController {
         List<Ticker> tickers = tickerService.findAll();
         model.addAttribute("tickers", tickers);
 
-        if(tickerCode.equals("NONE")){
+        if (tickerCode.equals("NONE")) {
 
             return "issuer_by_ticker";
         }
-        if(!this.issuerService.getIssuersByTickerCode(tickerCode).isEmpty()){
+        if (!this.issuerService.getIssuersByTickerCode(tickerCode).isEmpty()) {
             List<Issuer> TickerData = issuerService.getIssuersByTickerCode(tickerCode);
             TickerData.sort(Comparator.comparing(Issuer::getDate).reversed());
             model.addAttribute("TickerData", TickerData);
@@ -97,14 +97,14 @@ public class IssuerWebController {
         List<Ticker> tickers = tickerService.findAll();
         model.addAttribute("tickers", tickers);
 
-        if(!this.issuerService.getIssuersByTickerCode(tickerCode).isEmpty()){
+        if (!this.issuerService.getIssuersByTickerCode(tickerCode).isEmpty()) {
             List<Issuer> TickerData = issuerService.getIssuersByTickerCode(tickerCode);
             TickerData.sort(Comparator.comparing(Issuer::getDate).reversed());
             TickerData = TickerData.stream().
                     filter(ticker -> ticker.getDate().isAfter(LocalDate.parse(dateFrom, formatter))
                             && ticker.getDate().isBefore(LocalDate.parse(dateTo, formatter))).collect(Collectors.toList());
             model.addAttribute("TickerData", TickerData);
-            if(TickerData.isEmpty()){
+            if (TickerData.isEmpty()) {
                 return "redirect:/issuers?error=NoDataFrom" + dateFrom + "TILL" + dateTo;
             }
             return "issuer_by_ticker";
@@ -112,6 +112,42 @@ public class IssuerWebController {
 
         return "redirect:/issuers?error=tickerCodeNotFound";
 
+    }
+
+    @GetMapping("/report")
+    public String getReport(@RequestParam(value = "period", defaultValue = "day") String period, Model model) {
+        LocalDate today = LocalDate.now();
+        LocalDate startOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
+        LocalDate startOfMonth = today.withDayOfMonth(1);
+
+        List<Issuer> issuers = issuerService.getAllIssuers();
+
+
+        switch (period.toLowerCase()) {
+            case "week":
+                issuers = issuers.stream()
+                        .filter(issuer -> !issuer.getDate().isBefore(startOfWeek) && !issuer.getDate().isAfter(today))
+                        .collect(Collectors.toList());
+                model.addAttribute("period", "Weekly Report");
+                break;
+
+            case "month":
+                issuers = issuers.stream()
+                        .filter(issuer -> !issuer.getDate().isBefore(startOfMonth) && !issuer.getDate().isAfter(today))
+                        .collect(Collectors.toList());
+                model.addAttribute("period", "Monthly Report");
+                break;
+
+            default: // "day"
+                issuers = issuers.stream()
+                        .filter(issuer -> issuer.getDate().isEqual(today))
+                        .collect(Collectors.toList());
+                model.addAttribute("period", "Daily Report");
+                break;
+        }
+
+        model.addAttribute("issuers", issuers);
+        return "report";
     }
 
 }
