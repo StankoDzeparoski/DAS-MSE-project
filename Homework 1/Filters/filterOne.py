@@ -7,10 +7,6 @@ import logging
 BASE_URL = "http://www.mse.mk/mk/symbol/"
 DB_NAME = "mse_data.db"
 
-# Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-
 def getTickers():
     """
     Fetch ticker codes from the MSE website.
@@ -56,7 +52,7 @@ def get_company_name(ticker_name):
         return None
 
     except requests.exceptions.RequestException as e:
-        logging.error(f"Error fetching company name for {ticker_name}: {e}")
+        print(f"Error fetching company name for {ticker_name}: {e}")
         return None
 
 
