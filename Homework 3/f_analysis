@@ -1,0 +1,123 @@
+import sqlite3
+import pandas as pd
+import ta
+import logging
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Function to load data from SQLite
+def load_data_from_db(db_name="mse_data.db", ticker_code="ADIN"):
+    try:
+        connection = sqlite3.connect(db_name)
+        query = f"""
+        SELECT date, last_price AS Last_Trade_Price, max_price AS Max, min_price AS Min, volume AS Volume
+        FROM mse_data
+        WHERE ticker_code = '{ticker_code}'
+        ORDER BY date ASC
+        """
+        df = pd.read_sql_query(query, connection)
+        df['date'] = pd.to_datetime(df['date'])
+        df.set_index('date', inplace=True)
+        connection.close()
+        logging.info(f"Data loaded successfully for ticker {ticker_code}")
+        return df
+    except Exception as e:
+        logging.error(f"Error loading data: {e}")
+        raise
+
+# Function to load news data (this is a placeholder; replace with actual news data)
+def load_news_data(ticker_code="ADIN"):
+    """
+    Load news data for a specific ticker.
+    This is a placeholder function that should be replaced with actual news data.
+    """
+    # Example news data (in practice, replace this with news scraping or an API call)
+    news_data = [
+        {"date": "2024-12-01", "headline": "Company ADIN shows strong quarterly earnings"},
+        {"date": "2024-12-02", "headline": "ADIN stock falls due to management issues"},
+        {"date": "2024-12-03", "headline": "ADIN announces exciting new product line"},
+        {"date": "2024-12-04", "headline": "Negative outlook for ADIN due to market downturn"}
+    ]
+    return pd.DataFrame(news_data)
+
+# Function to perform sentiment analysis on the news headlines
+def perform_sentiment_analysis(news_df):
+    """
+    Perform sentiment analysis on the news articles using VADER.
+    """
+    analyzer = SentimentIntensityAnalyzer()
+    news_df['sentiment'] = news_df['headline'].apply(lambda x: analyzer.polarity_scores(x)['compound'])
+    news_df['sentiment_label'] = news_df['sentiment'].apply(
+        lambda x: 'Positive' if x > 0.1 else ('Negative' if x < -0.1 else 'Neutral')
+    )
+    return news_df
+
+# Function to calculate indicators for multiple timeframes
+def calculate_indicators(df):
+    timeframes = {'1D': 1, '1W': 7, '1M': 30}  # Define timeframes
+    for label, period in timeframes.items():
+        df[f'RSI_{label}'] = ta.momentum.RSIIndicator(close=df['Last_Trade_Price'], window=period).rsi()
+        df[f'SMA_{label}'] = ta.trend.SMAIndicator(close=df['Last_Trade_Price'], window=period).sma_indicator()
+        df[f'EMA_{label}'] = ta.trend.EMAIndicator(close=df['Last_Trade_Price'], window=period).ema_indicator()
+    return df
+
+# Function to generate buy/sell signals based on sentiment
+def generate_sentiment_signals(news_df):
+    """
+    Generate signals based on sentiment analysis.
+    """
+    sentiment = news_df['sentiment_label'].mode()[0]  # Get the most common sentiment
+    if sentiment == 'Positive':
+        return 'Buy'
+    elif sentiment == 'Negative':
+        return 'Sell'
+    else:
+        return 'Hold'
+
+# Function to combine technical analysis and sentiment analysis
+def combine_analysis(df, ticker_code="ADIN"):
+    """
+    Combine the results of technical and fundamental analysis.
+    """
+    # Load and analyze news
+    news_df = load_news_data(ticker_code)
+    news_df = perform_sentiment_analysis(news_df)
+
+    sentiment_signal = generate_sentiment_signals(news_df)
+
+    # Perform technical analysis
+    df = calculate_indicators(df)
+
+    # Use technical indicators to make a decision
+    if df['RSI_1D'].iloc[-1] < 30:
+        technical_signal = 'Buy'
+    elif df['RSI_1D'].iloc[-1] > 70:
+        technical_signal = 'Sell'
+    else:
+        technical_signal = 'Hold'
+
+    # Combine both signals
+    if sentiment_signal == 'Buy' and technical_signal == 'Buy':
+        final_signal = 'Strong Buy'
+    elif sentiment_signal == 'Sell' and technical_signal == 'Sell':
+        final_signal = 'Strong Sell'
+    else:
+        final_signal = 'Hold'
+
+    return final_signal
+
+# Example main function
+def main():
+    ticker_code = "ADIN"
+    df = load_data_from_db(ticker_code=ticker_code)
+
+    # Combine technical and fundamental analysis
+    recommendation = combine_analysis(df, ticker_code)
+
+    # Output recommendation
+    print(f"Stock recommendation for {ticker_code}: {recommendation}")
+
+if __name__ == "__main__":
+    main()
