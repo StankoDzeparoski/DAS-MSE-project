@@ -10,4 +10,5 @@ public interface TickerService {
     List<Ticker> findAll();
     // Custom logic (e.g., find by symbol)
     public Optional<Ticker> findBySymbol(String symbol);
+    public Optional<Ticker> findByCompanyName(String companyName);
 }

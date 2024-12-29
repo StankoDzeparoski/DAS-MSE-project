@@ -29,5 +29,10 @@ public class TickerServiceImpl implements TickerService {
                 .filter(ticker -> symbol.equalsIgnoreCase(ticker.getTickerCode()))
                 .findFirst();
     }
+    public Optional <Ticker> findByCompanyName(String company_name){
+        return tickerRepository.findAll().stream().
+                filter(ticker -> company_name.equalsIgnoreCase(ticker.getCompanyName())).
+                findFirst();
+    }
 }
 
