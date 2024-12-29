@@ -68,6 +68,7 @@ public class IssuerWebController {
         List<Ticker> tickers = tickerService.findAll();
         model.addAttribute("tickers", tickers);
 
+
         if (tickerCode.equals("NONE")) {
 
             return "issuer_by_ticker";

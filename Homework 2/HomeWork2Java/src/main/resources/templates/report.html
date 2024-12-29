@@ -236,7 +236,7 @@
         #content {
             height: 100%;
             position: absolute;
-            top:15%;
+            top: 15%;
             margin-left: 260px; /* Ensure content is to the right of the sidebar */
             padding: 20px;
             margin-top: 6%; /* Start below the navbar */
@@ -319,9 +319,9 @@
 
         /* Remove margin-top in the chart container to eliminate space */
 
-        .content-wrapper{
-            height:50%;
-            width:90%;
+        .content-wrapper {
+            height: 50%;
+            width: 90%;
         }
     </style>
 </head>
@@ -381,15 +381,15 @@
 <div id="content">
     <div class="content-wrapper">
         <!-- Button Container - Move this above the chart -->
-<!--        <div class="button-container">-->
-<!--            <button th:href="@{/issuers}" class="report-button">This Day</button>-->
-<!--            <button th:href="@{/report(period='week')}" class="report-button">This Week</button>-->
-<!--            <button th:href="@{/report(period='month')}" class="report-button">This Month</button>-->
-<!--        </div>-->
-<!--        <br>-->
-<!--        <div class = "daily_report">-->
-<!--            <img src="http://localhost:8080/assets/dailyreport1.png">-->
-<!--        </div>-->
+        <!--        <div class="button-container">-->
+        <!--            <button th:href="@{/issuers}" class="report-button">This Day</button>-->
+        <!--            <button th:href="@{/report(period='week')}" class="report-button">This Week</button>-->
+        <!--            <button th:href="@{/report(period='month')}" class="report-button">This Month</button>-->
+        <!--        </div>-->
+        <!--        <br>-->
+        <!--        <div class = "daily_report">-->
+        <!--            <img src="http://localhost:8080/assets/dailyreport1.png">-->
+        <!--        </div>-->
         <script>
             function updateFormAction(event) {
                 const form = document.getElementById('indicatorForm');
@@ -428,6 +428,13 @@
             <p th:text="${indicator.getKey()}"></p>
             <p th:text="${indicator.getValue()}"></p>
         </div>
+        <div id="sentimentResults">
+            <!-- This section will be populated with sentiment results dynamically -->
+            <p>Sentiment Analysis: <span id="sentimentText"></span></p>
+            <p><strong>Positive:</strong> <span id="positiveCount">Loading...</span></p>
+            <p><strong>Neutral:</strong> <span id="neutralCount">Loading...</span></p>
+            <p><strong>Negative:</strong> <span id="negativeCount">Loading...</span></p>
+        </div>
 
 
         <!-- <h1 th:text="${period}"></h1>-->
@@ -442,6 +449,47 @@
 
 <!-- JavaScript Both Nav bar scripts-->
 <script>
+    function getCompanyNameFromTicker(tickerCode) {
+        for (let i = 0; i < tickers.length; i++) {
+            if (tickers[i].tickerCode === tickerCode) {
+                return tickers[i].companyName; // Return the corresponding company name
+            }
+        }
+        return null; // Return null if ticker code is not found
+    }
+
+
+    async function getSentimentAnalysis() {
+        const tickerCode = document.getElementById('dropdown').value;
+        const companyName = getCompanyNameFromTicker(tickerCode);
+
+        try {
+            // Replace with your actual API URL
+            const response = await fetch(`/get-sentiment?ticker_code=${tickerCode}&company_name=${companyName}`);// Adjust as needed
+            const data = await response.json();
+            console.log(data);
+            // Update the sentiment values in the HTML
+            if (data) {
+                document.getElementById('positiveCount').textContent = data.positive || 0;
+                document.getElementById('neutralCount').textContent = data.neutral || 0;
+                document.getElementById('negativeCount').textContent = data.negative || 0;
+            } else {
+                document.getElementById('positiveCount').textContent = '0';
+                document.getElementById('neutralCount').textContent = '0';
+                document.getElementById('negativeCount').textContent = '0';
+            }
+        } catch (error) {
+            console.error('Error fetching sentiment analysis:', error);
+            document.getElementById('positiveCount').textContent = 'Failed to load';
+            document.getElementById('neutralCount').textContent = 'Failed to load';
+            document.getElementById('negativeCount').textContent = 'Failed to load';
+        }
+    }
+
+    // Call the function to fetch sentiment data when the page loads
+    window.onload = getSentimentAnalysis;
+
+
     // /*<![CDATA[*/
     // const issuers = /*[[${issuers}]]*/[];
     // const labels = issuers.map(issuer => issue);
