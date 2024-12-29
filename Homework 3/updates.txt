@@ -1,1 +1,7 @@
 implementing techical analysis first
+technical analysis is implemented in the code in Homework 2 directory:
+-Homework 2/HomeWork2Java/src/main/java/mk/ukim/finki/wp/homework2das/service/impl/IssuerServiceImpl.java
+-Homework 2/HomeWork2Java/src/main/java/mk/ukim/finki/wp/homework2das/web/controller/IssuerWebController.java
+-Homework 2/HomeWork2Java/src/main/resources/templates/report.html
+
+
