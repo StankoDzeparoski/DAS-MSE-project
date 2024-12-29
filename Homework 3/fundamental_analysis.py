@@ -2,8 +2,12 @@ from flask import Flask, request, jsonify
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import requests
 from bs4 import BeautifulSoup
+from flask_cors import CORS
 
 app = Flask(__name__)
+# CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/get-sentiment/*": {"origins": "http://localhost:8080"}})
+
 
 # Function to fetch and analyze news sentiment for a given company
 def get_news_sentiment(ticker_code, company_name):
@@ -55,12 +59,21 @@ def get_news_sentiment(ticker_code, company_name):
 def sentiment():
     ticker_code = request.args.get('ticker_code')
     company_name = request.args.get('company_name')
+    print(f"Received ticker_code: {ticker_code}, company_name: {company_name}")
 
     if not ticker_code or not company_name:
         return jsonify({"error": "ticker_code and company_name are required parameters."}), 400
 
     sentiment = get_news_sentiment(ticker_code, company_name)
-    return jsonify(sentiment)
+    print(f"Sentiment Response: {sentiment}")
+    return jsonify(sentiment), 200, {'Content-Type': 'application/json; charset=utf-8'}
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:8080')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, OPTIONS')
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True)

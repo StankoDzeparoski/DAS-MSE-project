@@ -417,7 +417,7 @@
                         </option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Indicators</button>
+                <button id="analysisBTN"type="submit" class="btn btn-primary">Indicators</button>
                 <a type="button" class="btn btn-back" href="/issuers">Back</a>
             </form>
         </div>
@@ -431,9 +431,9 @@
         <div id="sentimentResults">
             <!-- This section will be populated with sentiment results dynamically -->
             <p>Sentiment Analysis: <span id="sentimentText"></span></p>
-            <p><strong>Positive:</strong> <span id="positiveCount">Loading...</span></p>
-            <p><strong>Neutral:</strong> <span id="neutralCount">Loading...</span></p>
-            <p><strong>Negative:</strong> <span id="negativeCount">Loading...</span></p>
+            <p><strong>Positive:</strong> <span id="positiveCount"></span></p>
+            <p><strong>Neutral:</strong> <span id="neutralCount"></span></p>
+            <p><strong>Negative:</strong> <span id="negativeCount"></span></p>
         </div>
 
 
@@ -448,46 +448,87 @@
 </div>
 
 <!-- JavaScript Both Nav bar scripts-->
-<script>
+<script th:inline="javascript" type="module">
+
+    document.getElementById("analysisBTN").addEventListener("click", () => {
+        getSentimentAnalysis();
+    });
+
+
     function getCompanyNameFromTicker(tickerCode) {
-        for (let i = 0; i < tickers.length; i++) {
-            if (tickers[i].tickerCode === tickerCode) {
-                return tickers[i].companyName; // Return the corresponding company name
+        var tickersJS = /*[[${tickers}]]*/ [];
+        console.log('Tickers Array:', tickersJS);
+        for (let i = 0; i < tickersJS.length; i++) {
+            if (tickersJS[i].tickerCode === tickerCode) {
+                return tickersJS[i].companyName; // Return the corresponding company name
             }
         }
         return null; // Return null if ticker code is not found
     }
 
+    async function getSA(){
+        const tickerCode = document.getElementById('dropdown').value.trim();
+        const companyName = await getCompanyNameFromTicker(tickerCode).trim();
 
-    async function getSentimentAnalysis() {
-        const tickerCode = document.getElementById('dropdown').value;
-        const companyName = getCompanyNameFromTicker(tickerCode);
+        const url = `http://localhost:5000/get-sentiment?ticker_code=${tickerCode}&company_name=${companyName}`;
 
-        try {
-            // Replace with your actual API URL
-            const response = await fetch(`/get-sentiment?ticker_code=${tickerCode}&company_name=${companyName}`);// Adjust as needed
-            const data = await response.json();
-            console.log(data);
-            // Update the sentiment values in the HTML
-            if (data) {
+        const params = {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        };
+
+        fetch(url, params)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                document.getElementById('content').value = data;
                 document.getElementById('positiveCount').textContent = data.positive || 0;
                 document.getElementById('neutralCount').textContent = data.neutral || 0;
                 document.getElementById('negativeCount').textContent = data.negative || 0;
-            } else {
-                document.getElementById('positiveCount').textContent = '0';
-                document.getElementById('neutralCount').textContent = '0';
-                document.getElementById('negativeCount').textContent = '0';
-            }
-        } catch (error) {
-            console.error('Error fetching sentiment analysis:', error);
-            document.getElementById('positiveCount').textContent = 'Failed to load';
-            document.getElementById('neutralCount').textContent = 'Failed to load';
-            document.getElementById('negativeCount').textContent = 'Failed to load';
-        }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 
-    // Call the function to fetch sentiment data when the page loads
-    window.onload = getSentimentAnalysis;
+
+    async function getSentimentAnalysis() {
+        await getSA();
+        // const tickerCode = document.getElementById('dropdown').value;
+        // const companyName = getCompanyNameFromTicker(tickerCode);
+        //
+        // try {
+        //     // Replace with your actual API URL
+        //     const response = await fetch(`/get-sentiment?ticker_code=${tickerCode}&company_name=${companyName}`);// Adjust as needed
+        //     const data = await response.json();
+        //     console.log(data);
+        //     // Update the sentiment values in the HTML
+        //     if (data) {
+        //         document.getElementById('positiveCount').textContent = data.positive || 0;
+        //         document.getElementById('neutralCount').textContent = data.neutral || 0;
+        //         document.getElementById('negativeCount').textContent = data.negative || 0;
+        //     } else {
+        //         document.getElementById('positiveCount').textContent = '0';
+        //         document.getElementById('neutralCount').textContent = '0';
+        //         document.getElementById('negativeCount').textContent = '0';
+        //     }
+        // } catch (error) {
+        //     console.error('Error fetching sentiment analysis:', error);
+        //     document.getElementById('positiveCount').textContent = 'Failed to load';
+        //     document.getElementById('neutralCount').textContent = 'Failed to load';
+        //     document.getElementById('negativeCount').textContent = 'Failed to load';
+        // }
+    }
+
+    // // Call the function to fetch sentiment data when the page loads
+    // window.onload = getSentimentAnalysis;
 
 
     // /*<![CDATA[*/
