@@ -320,7 +320,6 @@
         /* Remove margin-top in the chart container to eliminate space */
 
         .content-wrapper{
-            padding-top:50%;
             height:50%;
             width:90%;
         }
@@ -382,17 +381,48 @@
 <div id="content">
     <div class="content-wrapper">
         <!-- Button Container - Move this above the chart -->
-        <div class="button-container">
-            <button th:href="@{/issuers}" class="report-button">This Day</button>
-            <button th:href="@{/report(period='week')}" class="report-button">This Week</button>
-            <button th:href="@{/report(period='month')}" class="report-button">This Month</button>
-        </div>
-        <br>
-        <div class = "daily_report">
-            <img src="http://localhost:8080/assets/dailyreport1.png">
-        </div>
-        <div th:value="${period}" th:text="${period}">
+<!--        <div class="button-container">-->
+<!--            <button th:href="@{/issuers}" class="report-button">This Day</button>-->
+<!--            <button th:href="@{/report(period='week')}" class="report-button">This Week</button>-->
+<!--            <button th:href="@{/report(period='month')}" class="report-button">This Month</button>-->
+<!--        </div>-->
+<!--        <br>-->
+<!--        <div class = "daily_report">-->
+<!--            <img src="http://localhost:8080/assets/dailyreport1.png">-->
+<!--        </div>-->
+        <script>
+            function updateFormAction(event) {
+                const form = document.getElementById('indicatorForm');
+                const dropdown = document.getElementById('dropdown').value;
 
+                if (dropdown) {
+                    // Update form action dynamically with the selected dropdown value
+                    form.action = `/report/${dropdown}`;
+                } else {
+                    // Prevent submission and alert the user if no ticker is selected
+                    event.preventDefault();
+                    alert("Please select an issuer from the dropdown.");
+                }
+            }
+        </script>
+        <div>
+            <form id="indicatorForm" onsubmit="updateFormAction(event)" method="POST">
+                <div class="form-group">
+                    <label for="dropdown">Ticker</label>
+                    <select id="dropdown" name="dropdown" required>
+                        <option value="" disabled selected>Select an issuer</option>
+                        <option th:each="ticker : ${tickers}"
+                                th:value="${ticker.getTickerCode()}"
+                                th:text="${ticker.getTickerCode()}">
+                        </option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Indicators</button>
+                <a type="button" class="btn btn-back" href="/issuers">Back</a>
+            </form>
+        </div>
+        <div>
+            <p th:text="'Technical report for ticker ' + (${tickerCode} ?: 'None')"></p>
         </div>
         <div th:each="indicator : ${TechA}">
             <p th:text="${indicator.getKey()}"></p>

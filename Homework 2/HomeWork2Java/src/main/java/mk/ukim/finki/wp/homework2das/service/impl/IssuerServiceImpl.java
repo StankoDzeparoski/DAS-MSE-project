@@ -68,6 +68,9 @@ public class IssuerServiceImpl implements IssuerService {
         SMAIndicator sma = new SMAIndicator(closePrice, 14);
         EMAIndicator ema = new EMAIndicator(closePrice, 14);
         WMAIndicator wma = new WMAIndicator(closePrice, 14);
+        ATRIndicator atr = new ATRIndicator(series, 14);
+        TripleEMAIndicator tema = new TripleEMAIndicator(closePrice, 14); // Triple Exponential Moving Average
+        KAMAIndicator kama = new KAMAIndicator(closePrice, 2, 30, 60); // Correct constructor usage
 
         // Prepare maps for results
         Map<String, Double> indicators1d = new HashMap<>();
@@ -83,10 +86,13 @@ public class IssuerServiceImpl implements IssuerService {
         indicators1d.put("SMA", sma.getValue(lastIndex).doubleValue());
         indicators1d.put("EMA", ema.getValue(lastIndex).doubleValue());
         indicators1d.put("WMA", wma.getValue(lastIndex).doubleValue());
+        indicators1d.put("ATR", atr.getValue(lastIndex).doubleValue());
+        indicators1d.put("TEMA", tema.getValue(lastIndex).doubleValue());
+        indicators1d.put("KAMA", kama.getValue(lastIndex).doubleValue());
 
         // Calculate averages for last 7 days and last 30 days
-        calculateAverages(series, rsi, stochastic, macd, cci, sma, ema, wma, lastIndex, 7, indicators7d);
-        calculateAverages(series, rsi, stochastic, macd, cci, sma, ema, wma, lastIndex, 30, indicators30d);
+        calculateAverages(series, rsi, stochastic, macd, cci, sma, ema, wma, atr, tema, kama, lastIndex, 7, indicators7d);
+        calculateAverages(series, rsi, stochastic, macd, cci, sma, ema, wma, atr, tema, kama, lastIndex, 30, indicators30d);
 
         // Combine results into a single map
         Map<String, Map<String, Double>> combinedResults = new HashMap<>();
@@ -106,6 +112,9 @@ public class IssuerServiceImpl implements IssuerService {
             SMAIndicator sma,
             EMAIndicator ema,
             WMAIndicator wma,
+            ATRIndicator atr,
+            TripleEMAIndicator tema,
+            KAMAIndicator kama,
             int lastIndex,
             int period,
             Map<String, Double> resultMap
@@ -113,7 +122,8 @@ public class IssuerServiceImpl implements IssuerService {
         int startIndex = Math.max(0, lastIndex - period + 1);
         int count = lastIndex - startIndex + 1;
 
-        double rsiSum = 0, stochasticSum = 0, macdSum = 0, cciSum = 0, smaSum = 0, emaSum = 0, wmaSum = 0;
+        double rsiSum = 0, stochasticSum = 0, macdSum = 0, cciSum = 0, smaSum = 0, emaSum = 0, wmaSum = 0, atrSum = 0;
+        double temaSum = 0, kamaSum = 0;
 
         for (int i = startIndex; i <= lastIndex; i++) {
             rsiSum += rsi.getValue(i).doubleValue();
@@ -123,6 +133,9 @@ public class IssuerServiceImpl implements IssuerService {
             smaSum += sma.getValue(i).doubleValue();
             emaSum += ema.getValue(i).doubleValue();
             wmaSum += wma.getValue(i).doubleValue();
+            atrSum += atr.getValue(i).doubleValue();
+            temaSum += tema.getValue(i).doubleValue();
+            kamaSum += kama.getValue(i).doubleValue();
         }
 
         resultMap.put("RSI", rsiSum / count);
@@ -132,6 +145,9 @@ public class IssuerServiceImpl implements IssuerService {
         resultMap.put("SMA", smaSum / count);
         resultMap.put("EMA", emaSum / count);
         resultMap.put("WMA", wmaSum / count);
+        resultMap.put("ATR", atrSum / count);
+        resultMap.put("TEMA", temaSum / count);
+        resultMap.put("KAMA", kamaSum / count);
     }
 
     private BarSeries createBarSeries(List<Issuer> issuers) {

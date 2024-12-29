@@ -113,37 +113,15 @@ public class IssuerWebController {
     }
 
     @GetMapping("/report")
-    public String getReport(@RequestParam(value = "period", defaultValue = "day") String period, Model model) {
-
-        List<Issuer> TickerData = issuerService.getIssuersByTickerCode("ALK");
-        TickerData.sort(Comparator.comparing(Issuer::getDate).reversed());
-
-        LocalDate dateTo = TickerData.get(0).getDate();
-        LocalDate dateFrom = TickerData.get(0).getDate().minusDays(30);
-
-        TickerData = TickerData.stream().
-                filter(ticker -> ticker.getDate().isAfter(dateFrom)
-                        && ticker.getDate().isBefore(dateTo)).collect(Collectors.toList());
-        model.addAttribute("TickerData", TickerData);
-        Map<String, Map<String, Double>> result = issuerService.calculateIndicators(TickerData);
-
-//      Format before print
-        DecimalFormat decimalFormat = new DecimalFormat(".#");
-        Map<String, Map<String, String>> formattedResult = result.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().entrySet().stream()
-                                .collect(Collectors.toMap(
-                                        Map.Entry::getKey,
-                                        innerEntry -> decimalFormat.format(innerEntry.getValue())
-                                ))
-                ));
+    public String getReport(@RequestParam(value = "period", defaultValue = "day") String period, @RequestParam(required = false) String error, Model model) {
+          List<Ticker> tickers = tickerService.findAll();
+          model.addAttribute("tickers", tickers);
 
 
-        model.addAttribute("TechA", formattedResult);
-
-
-
+        if (error != null && !error.isEmpty()) {
+            model.addAttribute("hasError", true);
+            model.addAttribute("error", error);
+        }
 
 //        String result = decimalFormat.format(12.763);
 
@@ -180,6 +158,53 @@ public class IssuerWebController {
 //        model.addAttribute("issuers", issuers);
 //        return "report";
         return "report";
+    }
+
+    // Mapping to show the report of a single issuer by tickerCode
+    @PostMapping("/report/{tickerCode}")
+    public String showTechnicalReportIssuer(@PathVariable String tickerCode,
+                                                  Model model) {
+        List<Ticker> tickers = tickerService.findAll();
+        model.addAttribute("tickers", tickers);
+
+
+        if (!this.issuerService.getIssuersByTickerCode(tickerCode).isEmpty()) {
+            List<Issuer> TickerData = issuerService.getIssuersByTickerCode(tickerCode);
+            TickerData.sort(Comparator.comparing(Issuer::getDate).reversed());
+
+            LocalDate dateTo = TickerData.get(0).getDate();
+            LocalDate dateFrom = TickerData.get(0).getDate().minusDays(30);
+
+            TickerData = TickerData.stream().
+                    filter(ticker -> ticker.getDate().isAfter(dateFrom)
+                            && ticker.getDate().isBefore(dateTo)).collect(Collectors.toList());
+            model.addAttribute("TickerData", TickerData);
+            Map<String, Map<String, Double>> result = issuerService.calculateIndicators(TickerData);
+
+//      Format before print
+            DecimalFormat decimalFormat = new DecimalFormat(".#");
+            Map<String, Map<String, String>> formattedResult = result.entrySet().stream()
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            entry -> entry.getValue().entrySet().stream()
+                                    .collect(Collectors.toMap(
+                                            Map.Entry::getKey,
+                                            innerEntry -> decimalFormat.format(innerEntry.getValue())
+                                    ))
+                    ));
+
+
+            model.addAttribute("TechA", formattedResult);
+            model.addAttribute("tickerCode", tickerCode);
+
+            if (TickerData.isEmpty()) {
+                return "redirect:/report?error=NoDataFor" + tickerCode;
+            }
+            return "report";
+        }
+
+        return "redirect:/issuers?error=tickerCodeNotFound";
+
     }
 
 }
