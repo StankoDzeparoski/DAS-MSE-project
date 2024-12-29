@@ -9,12 +9,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -116,37 +114,71 @@ public class IssuerWebController {
 
     @GetMapping("/report")
     public String getReport(@RequestParam(value = "period", defaultValue = "day") String period, Model model) {
-        LocalDate today = LocalDate.now();
-        LocalDate startOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
-        LocalDate startOfMonth = today.withDayOfMonth(1);
 
-        List<Issuer> issuers = issuerService.getAllIssuers();
+        List<Issuer> TickerData = issuerService.getIssuersByTickerCode("ALK");
+        TickerData.sort(Comparator.comparing(Issuer::getDate).reversed());
+
+        LocalDate dateTo = TickerData.get(0).getDate();
+        LocalDate dateFrom = TickerData.get(0).getDate().minusDays(30);
+
+        TickerData = TickerData.stream().
+                filter(ticker -> ticker.getDate().isAfter(dateFrom)
+                        && ticker.getDate().isBefore(dateTo)).collect(Collectors.toList());
+        model.addAttribute("TickerData", TickerData);
+        Map<String, Map<String, Double>> result = issuerService.calculateIndicators(TickerData);
+
+//      Format before print
+        DecimalFormat decimalFormat = new DecimalFormat(".#");
+        Map<String, Map<String, String>> formattedResult = result.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().entrySet().stream()
+                                .collect(Collectors.toMap(
+                                        Map.Entry::getKey,
+                                        innerEntry -> decimalFormat.format(innerEntry.getValue())
+                                ))
+                ));
 
 
-        switch (period.toLowerCase()) {
-            case "week":
-                issuers = issuers.stream()
-                        .filter(issuer -> !issuer.getDate().isBefore(startOfWeek) && !issuer.getDate().isAfter(today))
-                        .collect(Collectors.toList());
-                model.addAttribute("period", "Weekly Report");
-                break;
+        model.addAttribute("TechA", formattedResult);
 
-            case "month":
-                issuers = issuers.stream()
-                        .filter(issuer -> !issuer.getDate().isBefore(startOfMonth) && !issuer.getDate().isAfter(today))
-                        .collect(Collectors.toList());
-                model.addAttribute("period", "Monthly Report");
-                break;
 
-            default: // "day"
-                issuers = issuers.stream()
-                        .filter(issuer -> issuer.getDate().isEqual(today))
-                        .collect(Collectors.toList());
-                model.addAttribute("period", "Daily Report");
-                break;
-        }
 
-        model.addAttribute("issuers", issuers);
+
+//        String result = decimalFormat.format(12.763);
+
+//        LocalDate today = LocalDate.now();
+//        LocalDate startOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
+//        LocalDate startOfMonth = today.withDayOfMonth(1);
+//
+//        List<Issuer> issuers = issuerService.getAllIssuers();
+//
+//
+//        switch (period.toLowerCase()) {
+//            case "week":
+//                issuers = issuers.stream()
+//                        .filter(issuer -> !issuer.getDate().isBefore(startOfWeek) && !issuer.getDate().isAfter(today))
+//                        .collect(Collectors.toList());
+//                model.addAttribute("period", "Weekly Report");
+//                break;
+//
+//            case "month":
+//                issuers = issuers.stream()
+//                        .filter(issuer -> !issuer.getDate().isBefore(startOfMonth) && !issuer.getDate().isAfter(today))
+//                        .collect(Collectors.toList());
+//                model.addAttribute("period", "Monthly Report");
+//                break;
+//
+//            default: // "day"
+//                issuers = issuers.stream()
+//                        .filter(issuer -> issuer.getDate().isEqual(today))
+//                        .collect(Collectors.toList());
+//                model.addAttribute("period", "Daily Report");
+//                break;
+//        }
+//
+//        model.addAttribute("issuers", issuers);
+//        return "report";
         return "report";
     }
 

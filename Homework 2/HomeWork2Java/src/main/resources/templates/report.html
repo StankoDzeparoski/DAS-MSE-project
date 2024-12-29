@@ -383,7 +383,7 @@
     <div class="content-wrapper">
         <!-- Button Container - Move this above the chart -->
         <div class="button-container">
-            <button th:href="@{/report(period='day')}" class="report-button">This Day</button>
+            <button th:href="@{/issuers}" class="report-button">This Day</button>
             <button th:href="@{/report(period='week')}" class="report-button">This Week</button>
             <button th:href="@{/report(period='month')}" class="report-button">This Month</button>
         </div>
@@ -391,6 +391,14 @@
         <div class = "daily_report">
             <img src="http://localhost:8080/assets/dailyreport1.png">
         </div>
+        <div th:value="${period}" th:text="${period}">
+
+        </div>
+        <div th:each="indicator : ${TechA}">
+            <p th:text="${indicator.getKey()}"></p>
+            <p th:text="${indicator.getValue()}"></p>
+        </div>
+
 
         <!-- <h1 th:text="${period}"></h1>-->
         <!--        <canvas id="issuerChart"></canvas>-->
