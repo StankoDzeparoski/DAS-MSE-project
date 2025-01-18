@@ -6,7 +6,8 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 # CORS(app, resources={r"/*": {"origins": "*"}})
-CORS(app, resources={r"/get-sentiment/*": {"origins": "http://localhost:8080"}})
+# CORS(app, resources={r"/get-sentiment/*": {"origins": "http://localhost:8080"}})
+CORS(app)
 
 
 # Function to fetch and analyze news sentiment for a given company
