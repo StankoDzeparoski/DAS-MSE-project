@@ -112,7 +112,7 @@ public class IssuerWebController {
         return "redirect:/issuers?error=tickerCodeNotFound";
 
     }
-
+    // Mapping to show the report page of an issuer
     @GetMapping("/report")
     public String getReport(@RequestParam(value = "period", defaultValue = "day") String period, @RequestParam(required = false) String error, Model model) {
           List<Ticker> tickers = tickerService.findAll();

@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="52920131-d44c-49dd-bd9e-e170a096a9ae" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/DAS-MSE-project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/DAS-MSE-project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/DAS-MSE-project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/DAS-MSE-project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Homework 2/HomeWork2Java/src/main/java/mk/ukim/finki/wp/homework2das/web/controller/IssuerWebController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Homework 2/HomeWork2Java/src/main/java/mk/ukim/finki/wp/homework2das/web/controller/IssuerWebController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,11 +14,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 1
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="2qtd7uZcnwijDpbRUrDbEClScp0" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -28,8 +28,8 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "D:/Users/User/Desktop/DAS-MSE-project/DAS-MSE-project",
+    "git-widget-placeholder": "HomeWork4Branch",
+    "last_opened_file_path": "C:/Users/stank/PycharmProjects/DAS-MSE-project",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -41,8 +41,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PY-243.21565.199" />
-        <option value="bundled-python-sdk-cab1f2013843-4ae2d6a61b08-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.21565.199" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-PY-242.23726.102" />
+        <option value="bundled-python-sdk-5e1850174b45-399fe30bd8c1-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-242.23726.102" />
       </set>
     </attachedChunks>
   </component>
@@ -55,6 +55,7 @@
       <option name="presentableId" value="Default" />
       <updated>1735485642444</updated>
       <workItem from="1735485645699" duration="630000" />
+      <workItem from="1737234047524" duration="8000" />
     </task>
     <servers />
   </component>

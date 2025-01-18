@@ -1,46 +1,65 @@
+from flask import Flask, jsonify
+from flask_cors import CORS
 import filterOne
 import filterTwo
 import filterThree
-import time
 import sqlite3
+import time
 
+app = Flask(__name__)
+CORS(app)  # Enables CORS for all routes
 
-if __name__ == '__main__':
-    start_time = time.time()
+DATABASE = "mse_data.db"
 
-    connection = sqlite3.connect("mse_data.db")
+def initialize_database():
+    """Initialize the database and create the required table if it doesn't exist."""
+    connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
 
-    # Create table if it doesn't exist
     cursor.execute("""
-            CREATE TABLE IF NOT EXISTS mse_data (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                ticker_code TEXT NOT NULL,
-                date TEXT NOT NULL,
-                last_price REAL,
-                max_price REAL,
-                min_price REAL,
-                volume REAL,
-                UNIQUE (ticker_code, date) ON CONFLICT REPLACE
-            )
-        """)
+        CREATE TABLE IF NOT EXISTS mse_data (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ticker_code TEXT NOT NULL,
+            date TEXT NOT NULL,
+            last_price REAL,
+            max_price REAL,
+            min_price REAL,
+            volume REAL,
+            UNIQUE (ticker_code, date) ON CONFLICT REPLACE
+        )
+    """)
     connection.commit()
     connection.close()
 
-    # Fetch issuer codes using Filter One and save them to the database
-    print("Fetching issuer codes...")
-    tickers = filterOne.getTickers()
-    filterOne.save_tickers_to_db(tickers, "mse_data.db")
-    print(f"Saved {len(tickers)} issuer codes to the database.")
+@app.route('/getDataBase', methods=['GET'])
+def get_database():
+    """Execute the entire pipeline and return the database."""
+    try:
+        start_time = time.time()
 
-    # Process each issuer using Filter Two
-    print("Processing data for each issuer...")
-    filterTwo.process_data_with_threads(tickers)
+        # Step 1: Initialize the database
+        initialize_database()
 
-    # Format and verify the data using Filter Three
-    print("Finalizing and verifying data...")
-    filterThree.update_data()
-    # filterThree.fetch_all_data_from_db("mse_data.db")
+        # Step 2: Fetch issuer codes and save to the database
+        tickers = filterOne.getTickers()
+        filterOne.save_tickers_to_db(tickers, DATABASE)
 
-    end_time = time.time()
-    print(f"Execution completed in {end_time - start_time:.2f} seconds.")
+        # Step 3: Process data for each issuer
+        filterTwo.process_data_with_threads(tickers)
+
+        # Step 4: Finalize and verify the data
+        filterThree.update_data()
+
+        end_time = time.time()
+
+        return jsonify({
+            "message": "Pipeline executed successfully",
+            "execution_time": f"{end_time - start_time:.2f} seconds",
+            "database": DATABASE
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
