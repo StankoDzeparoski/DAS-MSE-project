@@ -431,9 +431,15 @@
         <div id="sentimentResults">
             <!-- This section will be populated with sentiment results dynamically -->
             <p>Sentiment Analysis: <span id="sentimentText"></span></p>
-            <p><strong>Positive:</strong> <span id="positiveCount"></span></p>
-            <p><strong>Neutral:</strong> <span id="neutralCount"></span></p>
-            <p><strong>Negative:</strong> <span id="negativeCount"></span></p>
+            <th:block th:if="${error} == null">
+                <p th:text="'Positive: ' + ${positive}"><strong>Positive:</strong> <span id="positiveCount"></span></p>
+                <p th:text="'Neutral: ' + ${neutral}"><strong>Neutral:</strong> <span id="neutralCount"></span></p>
+                <p th:text="'Negative: ' + ${negative}"><strong>Negative:</strong> <span id="negativeCount"></span></p>
+            </th:block>
+            <th:block th:if="${error} != null">
+                <p th:text="${error}"><strong>Error:</strong></p>
+            </th:block>
+
         </div>
 
 

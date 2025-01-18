@@ -4,10 +4,13 @@ import mk.ukim.finki.wp.homework2das.model.Issuer;
 import mk.ukim.finki.wp.homework2das.model.Ticker;
 import mk.ukim.finki.wp.homework2das.service.IssuerService;
 import mk.ukim.finki.wp.homework2das.service.TickerService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -124,40 +127,6 @@ public class IssuerWebController {
             model.addAttribute("error", error);
         }
 
-//        String result = decimalFormat.format(12.763);
-
-//        LocalDate today = LocalDate.now();
-//        LocalDate startOfWeek = today.minusDays(today.getDayOfWeek().getValue() - 1);
-//        LocalDate startOfMonth = today.withDayOfMonth(1);
-//
-//        List<Issuer> issuers = issuerService.getAllIssuers();
-//
-//
-//        switch (period.toLowerCase()) {
-//            case "week":
-//                issuers = issuers.stream()
-//                        .filter(issuer -> !issuer.getDate().isBefore(startOfWeek) && !issuer.getDate().isAfter(today))
-//                        .collect(Collectors.toList());
-//                model.addAttribute("period", "Weekly Report");
-//                break;
-//
-//            case "month":
-//                issuers = issuers.stream()
-//                        .filter(issuer -> !issuer.getDate().isBefore(startOfMonth) && !issuer.getDate().isAfter(today))
-//                        .collect(Collectors.toList());
-//                model.addAttribute("period", "Monthly Report");
-//                break;
-//
-//            default: // "day"
-//                issuers = issuers.stream()
-//                        .filter(issuer -> issuer.getDate().isEqual(today))
-//                        .collect(Collectors.toList());
-//                model.addAttribute("period", "Daily Report");
-//                break;
-//        }
-//
-//        model.addAttribute("issuers", issuers);
-//        return "report";
         return "report";
     }
 
@@ -197,6 +166,34 @@ public class IssuerWebController {
 
             model.addAttribute("TechA", formattedResult);
             model.addAttribute("tickerCode", tickerCode);
+
+            String flaskApiUrl = "http://localhost:5000/get-sentiment";
+            String companyName = tickerService.findBySymbol(tickerCode).get().getCompanyName(); // Example company name
+
+            // Call the microservice
+            // Build the URL with query parameters
+            String url = flaskApiUrl + "?ticker_code=" + tickerCode + "&company_name=" + companyName;
+
+            // Create RestTemplate instance
+            RestTemplate restTemplate = new RestTemplate();
+
+            // Send GET request and get response
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            // Print the response
+            System.out.println("Response from Flask API: " + response.getBody());
+            // Parse JSON as JSONObject
+            JSONObject jsonResponse = new JSONObject(response.getBody());
+
+
+            if(jsonResponse.has("error")){
+                model.addAttribute("error", jsonResponse.get("error"));
+            } else {
+                model.addAttribute("positive", jsonResponse.get("positive"));
+                model.addAttribute("neutral", jsonResponse.get("neutral"));
+                model.addAttribute("negative", jsonResponse.get("negative"));
+            }
+
 
             if (TickerData.isEmpty()) {
                 return "redirect:/report?error=NoDataFor" + tickerCode;
