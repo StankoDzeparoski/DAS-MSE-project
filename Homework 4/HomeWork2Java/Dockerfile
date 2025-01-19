@@ -20,4 +20,3 @@ EXPOSE 8080
 
 # Run the Spring Boot application
 CMD ["java", "-jar", "HomeWork2Java-0.0.1-SNAPSHOT.jar"]
-
