@@ -1,0 +1,4 @@
+# Software Design Pattern
+The design pattern we used for our homeworks was MVC this is because MVC is a pattern we have learned before and currently use on our course Web Programming so we are familiar with its pros and cons, such as the clear outline of the projects code and well thought out structure based on the MVC pattern which allows us to interchange code where needed and adapt to the growing challenges we faced during this project. 
+# MicroService/API
+We refactored our homework1 code into a service using FLASK and CORS which returns the database with the data from mse.mk, our fundamental_analysis code also uses FLASK and CORS to return the sentiment from that analysis.
