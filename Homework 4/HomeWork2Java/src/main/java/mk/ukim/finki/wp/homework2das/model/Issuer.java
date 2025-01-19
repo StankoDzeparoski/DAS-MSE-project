@@ -31,6 +31,62 @@ public class Issuer {
     @Column(name = "volume")
     private Float volume;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTickerCode() {
+        return tickerCode;
+    }
+
+    public void setTickerCode(String tickerCode) {
+        this.tickerCode = tickerCode;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Float getLastPrice() {
+        return lastPrice;
+    }
+
+    public void setLastPrice(Float lastPrice) {
+        this.lastPrice = lastPrice;
+    }
+
+    public Float getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(Float maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
+    public Float getMinPrice() {
+        return minPrice;
+    }
+
+    public void setMinPrice(Float minPrice) {
+        this.minPrice = minPrice;
+    }
+
+    public Float getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Float volume) {
+        this.volume = volume;
+    }
+
     public Issuer() {}
 
     public Float getVolumeInMoney(){
