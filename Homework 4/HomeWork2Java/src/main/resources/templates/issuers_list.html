@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Boxicons CSS -->
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <title>Issuers</title>
+    <style>
+        /* Import Google font - Poppins */
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+        :root {
+            --white-color: #000000;
+            --blue-color: #4070f4;
+            --grey-color: #ff6300;
+            --grey-color-light: #aaa;
+        }
+        body {
+            background-color: #e7f2fd;
+            transition: all 0.5s ease;
+            display: flex;
+            flex-direction: row; /* To place the sidebar and content side by side */
+            margin: 0;
+            padding: 0;
+        }
+        body.dark {
+            background-color: #333;
+        }
+        body.dark {
+            --white-color: #333;
+            --blue-color: #fff;
+            --grey-color: #f2f2f2;
+            --grey-color-light: #aaa;
+        }
+
+        /* navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            height: 15%;
+            width: 100%;
+            left: 0;
+            background-color: var(--white-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /*padding: 15px 30px;*/
+            padding-left: 15px;
+            padding-right: 15px;
+            z-index: 1000;
+            box-shadow: 0 0 2px var(--grey-color-light);
+        }
+        .logo_item {
+            width: 25%;
+            height: 100%;
+            object-fit: contain;
+            display: flex;
+            align-items: center;
+            /*column-gap: 10px;*/
+            /*font-size: 22px;*/
+            /*font-weight: 500;*/
+            /*color: var(--blue-color);*/
+        }
+        .navbar img {
+            /*overflow: hidden;*/
+            width: auto;
+            height: 100%;
+            /*border-radius: 50%;*/
+        }
+        .search_bar {
+            height: 47px;
+            max-width: 430px;
+            width: 100%;
+        }
+        .search_bar input {
+            height: 100%;
+            width: 100%;
+            /*border-radius: 25px;*/
+            font-size: 18px;
+            outline: none;
+            background-color: white;
+            color: darkgray;
+            border: 1px solid var(--grey-color-light);
+            padding: 0 20px;
+        }
+        .navbar_content {
+            display: flex;
+            align-items: center;
+            column-gap: 25px;
+        }
+        .navbar_content i {
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--grey-color);
+        }
+
+        /* sidebar */
+        .sidebar {
+            background-color: var(--white-color);
+            width: 260px;
+            position: fixed;
+            top: 15%;
+            left: 0;
+            height: 100%;
+            /*padding: 80px 20px;*/
+            z-index: 100;
+            overflow-y: scroll;
+            box-shadow: 0 0 1px var(--grey-color-light);
+            transition: all 0.5s ease;
+            bottom: 0; /* Make sure it extends to the bottom */
+            padding: 20px;
+        }
+        .sidebar::-webkit-scrollbar {
+            display: none;
+        }
+        .menu_content {
+            position: relative;
+        }
+        .menu_editor::before {
+            content: "Editor";
+        }
+        .menu_setting::before {
+            content: "Setting";
+        }
+
+        .menu_items {
+            padding: 0;
+            list-style: none;
+        }
+        .navlink_icon {
+            position: relative;
+            font-size: 22px;
+            min-width: 50px;
+            line-height: 40px;
+            display: inline-block;
+            text-align: center;
+            border-radius: 6px;
+        }
+        .navlink_icon::before {
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: calc(100% + 100px);
+            left: -20px;
+        }
+        .navlink_icon:hover {
+            background: var(--blue-color);
+        }
+        .sidebar .nav_link {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 4px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--grey-color);
+            white-space: nowrap;
+        }
+        .nav_link:hover {
+            color: var(--white-color);
+            background: var(--blue-color);
+        }
+        .submenu_item {
+            cursor: pointer;
+        }
+        .submenu {
+            display: none;
+        }
+        .submenu_item .arrow-left {
+            position: absolute;
+            right: 10px;
+            display: inline-block;
+            margin-right: auto;
+        }
+
+        .show_submenu ~ .submenu {
+            display: block;
+        }
+        .show_submenu .arrow-left {
+            transform: rotate(90deg);
+        }
+        .submenu .sublink {
+            padding: 15px 15px 15px 52px;
+        }
+        .sidebar.hoverable .collapse_sidebar {
+            display: none;
+        }
+        @media screen and (max-width: 768px) {
+            #sidebarOpen {
+                font-size: 25px;
+                display: block;
+                margin-right: 10px;
+                cursor: pointer;
+                color: var(--grey-color);
+            }
+            .search_bar {
+                display: none;
+            }
+        }
+        #content {
+            position: absolute;
+            top:15%;
+            margin-left: 260px; /* Ensure content is to the right of the sidebar */
+            padding: 20px;
+            margin-top: 6%; /* Start below the navbar */
+            width: calc(100% - 260px); /* Take the remaining width minus the sidebar */
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            overflow: auto; /* Ensure scrolling if content overflows */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #dbaa79; /* Pale orange */
+            color: #3b2006; /* Dark brown text */
+        }
+        td a {
+            color: #80460d; /* Dark brown for the links */
+            text-decoration: none;
+        }
+        td a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<!-- navbar -->
+<nav class="navbar">
+    <div class="logo_item">
+        <img id="logo" src="http://localhost:8080/assets/stoxmk_logo.jpeg" alt="Stoxmk logo">
+    </div>
+
+    <div class="search_bar">
+        <input type="text" placeholder="Search for stocks" />
+    </div>
+
+    <div class="navbar_content">
+        <i class="bi bi-grid"></i>
+        <i class='bx bx-sun' id="darkLight"></i>
+    </div>
+</nav>
+
+<!-- sidebar -->
+<nav class="sidebar">
+    <div class="menu_content">
+        <ul class="menu_items">
+            <!-- duplicate or remove this li tag if you want to add or remove navlink with submenu -->
+            <!-- start -->
+            <li class="item">
+                <a th:href="@{/}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">HOME</span>
+                </a>
+                <a th:href="@{/issuers}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">ISSUERS LIST</span>
+                </a>
+                <a th:href="@{/report}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">REPORT</span>
+                </a>
+                <a th:href="@{/issuers/{tickerCode}(tickerCode='NONE')}" class="nav_link submenu_item">
+                    <span class="navlink_icon">
+                        <i class="bx bx-home-alt"></i>
+                    </span>
+                    <span class="navlink">HISTORY</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!-- Main Content -->
+<div id="content">
+    <h1>List of Issuers</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Issuer Code</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="ticker : ${tickers}">
+            <td>
+                <a th:href="@{/issuers/{tickerCode}(tickerCode=${ticker.tickerCode}, date='today')}"
+                   th:text="${ticker.tickerCode}">
+                    Ticker Code
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+
+
+<!-- JavaScript -->
+<script>
+    const body = document.querySelector("body");
+    const darkLight = document.querySelector("#darkLight");
+    const sidebar = document.querySelector(".sidebar");
+    const submenuItems = document.querySelectorAll(".submenu_item");
+    const logo = document.querySelector("#logo");
+
+
+
+    darkLight.addEventListener("click", () => {
+        body.classList.toggle("dark");
+        if (body.classList.contains("dark")) {
+            logo.src = "http://localhost:8080/assets/stoxmk_logodark.png";
+            darkLight.classList.replace("bx-sun", "bx-moon");
+        } else {
+            logo.src = "http://localhost:8080/assets/stoxmk_logo.jpeg";
+            darkLight.classList.replace("bx-moon", "bx-sun");
+        }
+    });
+
+    submenuItems.forEach((item, index) => {
+        item.addEventListener("click", () => {
+            item.classList.toggle("show_submenu");
+            submenuItems.forEach((item2, index2) => {
+                if (index !== index2) {
+                    item2.classList.remove("show_submenu");
+                }
+            });
+        });
+    });
+
+</script>
+</body>
+</html>
