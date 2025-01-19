@@ -1,9 +1,9 @@
 FROM python:3.10-slim
-WORKDIR /app
-COPY requirements.txt .
+WORKDIR /Filters
+COPY . /Filters/
+COPY requirements.txt /Filters/
 RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
 #the microservice will run on
-EXPOSE 5001
+EXPOSE 5000
 #the filter service
 CMD ["python", "main.py"]
