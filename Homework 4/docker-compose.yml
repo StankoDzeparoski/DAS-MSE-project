@@ -1,0 +1,38 @@
+version: '3.9'
+
+services:
+  filter-service:
+    build:
+      context: ./homework4/filter
+      dockerfile: Dockerfile-filters
+    expose:
+      - "5000"  #internal communication access port
+    networks:
+      - app-network
+
+  java-service:
+    build:
+      context: ./homework4/homework2java
+      dockerfile: Dockerfile-java
+    ports:
+      - "8080:8080"  #external user access port
+    networks:
+      - app-network
+    depends_on:
+      - filter-service
+      - analysis-service
+
+  analysis-service:
+    build:
+      context: ./homework4/homework3
+      dockerfile: Dockerfile-analysis
+    expose:
+      - "5000" #internal communication access port
+    networks:
+      - app-network
+    depends_on:
+      - filter-service
+
+networks:
+  app-network:
+    driver: bridge
