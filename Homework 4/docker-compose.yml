@@ -3,7 +3,7 @@ version: '3.9'
 services:
   filter-service:
     build:
-      context: ./homework4/filter
+      context: ./Filters
       dockerfile: Dockerfile-filters
     expose:
       - "5000"  #internal communication access port
@@ -12,7 +12,7 @@ services:
 
   java-service:
     build:
-      context: ./homework4/homework2java
+      context: ./HomeWork2Java
       dockerfile: Dockerfile-java
     ports:
       - "8080:8080"  #external user access port
@@ -24,7 +24,7 @@ services:
 
   analysis-service:
     build:
-      context: ./homework4/homework3
+      context: "./Homework 3"
       dockerfile: Dockerfile-analysis
     expose:
       - "5000" #internal communication access port
